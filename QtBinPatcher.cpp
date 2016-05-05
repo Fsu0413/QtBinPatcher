@@ -253,14 +253,18 @@ bool TQtBinPatcher::createTxtFilesForPatchList()
 
     // Files for patching in Qt4.
     static const TElement Elements4[] = {
+#ifndef OS_MACOS
         { "/lib/",             "*.prl",              false },
+#else
+        { "/lib/",             "*.pri",              true  },
+#endif
         { "/demos/shared/",    "libdemo_shared.prl", false },
         { "/lib/pkgconfig/",   "Qt*.pc",             false },
         { "/lib/pkgconfig/",   "phonon*.pc",         false },
 #if defined(OS_WINDOWS)
         { "/mkspecs/default/", "qmake.conf",         false },
         { "/",                 ".qmake.cache",       false }
-#elif defined(OS_LINUX)
+#elif defined(OS_LINUX) || defined(OS_MACOS)
         { "/lib/pkgconfig/",   "qt*.pc",             false },
         { "/lib/",             "*.la",               false },
         { "/mkspecs/",         "qconfig.pri",        false }
@@ -331,10 +335,15 @@ bool TQtBinPatcher::createBinFilesForPatchList()
         { "/bin/", "lrelease.exe"  },
         { "/bin/", "QtCore*.dll"   },
         { "/lib/", "QtCore*.dll"   }
-#elif defined(OS_LINUX)
+#else
         { "/bin/", "qmake"         },
         { "/bin/", "lrelease"      },
-        { "/lib/", "libQtCore4.so" }
+#if defined(OS_LINUX)
+        { "/lib/", "libQtCore*.so" }
+#elif defined(OS_MACOS)
+        { "/lib/", "libQtCore*.dylib" },
+        { "/lib/QtCore.framework", "QtCore" }
+#endif
 #endif
     };
 
@@ -353,7 +362,8 @@ bool TQtBinPatcher::createBinFilesForPatchList()
 #if defined(OS_LINUX)
         { "/lib/", "libQt5Core.so" }
 #elif defined(OS_MACOS)
-        { "/lib/", "libQt5Core.dylib" }
+        { "/lib/", "libQt5Core.dylib" },
+        { "/lib/QtCore.framework/", "QtCore" }
 #endif
 #endif
     };
