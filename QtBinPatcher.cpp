@@ -327,30 +327,34 @@ bool TQtBinPatcher::createBinFilesForPatchList()
     // Files for patching in Qt4.
     static const TElement Elements4[] = {
 #if defined(OS_WINDOWS)
-        { "/bin/", "qmake.exe"    },
-        { "/bin/", "lrelease.exe" },
-        { "/bin/", "QtCore*.dll"  },
-        { "/lib/", "QtCore*.dll"  }
+        { "/bin/", "qmake.exe"     },
+        { "/bin/", "lrelease.exe"  },
+        { "/bin/", "QtCore*.dll"   },
+        { "/lib/", "QtCore*.dll"   }
 #elif defined(OS_LINUX)
-        { "/bin/", "qmake"        },
-        { "/bin/", "lrelease"     },
-        { "/lib/", "libQtCore.so" }
+        { "/bin/", "qmake"         },
+        { "/bin/", "lrelease"      },
+        { "/lib/", "libQtCore4.so" }
 #endif
     };
 
     // Files for patching in Qt5.
     static const TElement Elements5[] = {
 #if defined(OS_WINDOWS)
-        { "/bin/", "qmake.exe"    },
-        { "/bin/", "lrelease.exe" },
-        { "/bin/", "qdoc.exe"     },
-        { "/bin/", "Qt5Core*.dll" },
-        { "/lib/", "Qt5Core*.dll" }
-#elif defined(OS_LINUX)
-        { "/bin/", "qmake"        },
-        { "/bin/", "lrelease"     },
-        { "/bin/", "qdoc"         },
-        { "/lib/", "libQtCore.so" }
+        { "/bin/", "qmake.exe"     },
+        { "/bin/", "lrelease.exe"  },
+        { "/bin/", "qdoc.exe"      },
+        { "/bin/", "Qt5Core*.dll"  },
+        { "/lib/", "Qt5Core*.dll"  }
+#else
+        { "/bin/", "qmake"         },
+        { "/bin/", "lrelease"      },
+        { "/bin/", "qdoc"          },
+#if defined(OS_LINUX)
+        { "/lib/", "libQt5Core.so" }
+#elif defined(OS_MACOS)
+        { "/lib/", "libQt5Core.dylib" }
+#endif
 #endif
     };
 

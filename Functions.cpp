@@ -37,7 +37,7 @@
 #if defined(OS_WINDOWS)
     #include <io.h>
     #include <direct.h>
-#elif defined(OS_LINUX)
+#elif defined(OS_LINUX) || defined(OS_MACOS)
     #include <sys/stat.h>
     #include <unistd.h>
     #include <glob.h>
@@ -181,7 +181,7 @@ string Functions::absolutePath(const string& relativePath)
         char AbsPath[_MAX_PATH];
         if (_fullpath(AbsPath, relativePath.c_str(), _MAX_PATH) != NULL)
             Result = normalizeSeparators(AbsPath);
-    #elif defined(OS_LINUX)
+    #elif defined(OS_LINUX) || defined(OS_MACOS)
         char AbsPath[PATH_MAX];
         if (realpath(relativePath.c_str(), AbsPath) != NULL)
             Result = AbsPath;
@@ -230,7 +230,7 @@ bool Functions::isFileExists(const char* fileName)
             _findclose(FindHandle);
             return true;
         }
-    #elif defined(OS_LINUX)
+    #elif defined(OS_LINUX) || defined(OS_MACOS)
         glob_t GlobData;
         if (glob(fileName, 0, NULL, &GlobData) == 0) {
             globfree(&GlobData);
@@ -250,7 +250,7 @@ long Functions::getFileSize(FILE* file)
 {
     #if defined(OS_WINDOWS)
         return _filelength(_fileno(file));
-    #elif defined(OS_LINUX)
+    #elif defined(OS_LINUX) || defined(OS_MACOS)
         struct stat Stat;
         if (fstat(fileno(file), &Stat) == 0)
             return Stat.st_size;
@@ -268,7 +268,7 @@ bool Functions::zeroFile(FILE* file)
     rewind(file);
     #if defined(OS_WINDOWS)
         return _chsize(_fileno(file), 0) == 0;
-    #elif defined(OS_LINUX)
+    #elif defined(OS_LINUX) || defined(OS_MACOS)
         return ftruncate(fileno(file), 0) == 0;
     #else
         #error "Unsupported OS."
@@ -400,7 +400,7 @@ TStringList Functions::findFiles(string dir, const string& mask)
             } while (_findnext(FindHandle, &FindData) == 0);
             _findclose(FindHandle);
         }
-    #elif defined(OS_LINUX)
+    #elif defined(OS_LINUX) || defined(OS_MACOS)
         glob_t GlobData;
         if (glob((dir + mask).c_str(), GLOB_MARK, NULL, &GlobData) == 0) {
             for (size_t i = 0; i < GlobData.gl_pathc; ++i) {
@@ -440,7 +440,7 @@ TStringList Functions::findFilesRecursive(string dir, const string& mask)
             _findclose(FindHandle);
         }
         splice(&Result, findFiles(dir, mask));
-    #elif defined (OS_LINUX)
+    #elif defined (OS_LINUX) || defined(OS_MACOS)
         glob_t GlobData;
         if (glob((dir + mask).c_str(), GLOB_MARK, NULL, &GlobData) == 0) {
             for (size_t i = 0; i < GlobData.gl_pathc; ++i) {

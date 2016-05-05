@@ -83,8 +83,9 @@ void howToUseMessage()
 int main(int argc, const char* argv[])
 {
     LOG("\n"
-        "QtBinPatcher v2.2.0. Tool for patching paths in Qt binaries.\n"
+        "QtBinPatcher v2.3.0Beta. Tool for patching paths in Qt binaries.\n"
         "Yuri V. Krugloff, 2013-2015. http://www.tver-soft.org\n"
+        "Frank Su, 2016. http://mogara.org\n"
         "This is free software released into the public domain.\n\n");
 
 
