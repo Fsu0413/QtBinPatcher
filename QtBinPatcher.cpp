@@ -406,6 +406,9 @@ bool TQtBinPatcher::patchTxtFile(const string& fileName)
 {
     LOG("Patching text file \"%s\".\n", fileName.c_str());
 
+    if (m_ArgsMap.contains(OPT_DRY_RUN))
+        return true;
+
     bool Result = false;
 
     FILE* File = fopen(fileName.c_str(), "r+b");
@@ -458,6 +461,9 @@ bool TQtBinPatcher::patchTxtFile(const string& fileName)
 bool TQtBinPatcher::patchBinFile(const string& fileName)
 {
     LOG("Patching binary file \"%s\".\n", fileName.c_str());
+
+    if (m_ArgsMap.contains(OPT_DRY_RUN))
+        return true;
 
     bool Result = false;
 
@@ -528,10 +534,16 @@ bool TQtBinPatcher::exec()
     if (!getNewQtDir())
         return false;
 
-    TBackup Backup;
-    Backup.setSkipBackup(m_ArgsMap.contains(OPT_NOBACKUP));
-    if (!Backup.backupFile(m_QtDir + "/bin/qt.conf", TBackup::bmRename))
-        return false;
+    TBackup *Backup = NULL;
+    if (!m_ArgsMap.contains(OPT_DRY_RUN)) {
+        Backup = new TBackup;
+
+        Backup->setSkipBackup(m_ArgsMap.contains(OPT_NOBACKUP));
+        if (!Backup->backupFile(m_QtDir + "/bin/qt.conf", TBackup::bmRename)) {
+            delete Backup;
+            return false;
+        }
+    }
 
     if (!isPatchNeeded()) {
         if (m_ArgsMap.contains(OPT_FORCE)) {
@@ -540,26 +552,46 @@ bool TQtBinPatcher::exec()
         } else {
             LOG("\nThe new and the old pathes to Qt directory are the same.\n"
                 "Patching not needed.\n");
+            if (!m_ArgsMap.contains(OPT_DRY_RUN))
+                delete Backup;
             return true;
         }
     }
 
     createPatchValues();
-    if (!createTxtFilesForPatchList() || !createBinFilesForPatchList())
+    if (!createTxtFilesForPatchList() || !createBinFilesForPatchList()) {
+        if (!m_ArgsMap.contains(OPT_DRY_RUN))
+            delete Backup;
         return false;
+    }
 
-    if (!Backup.backupFiles(m_TxtFilesForPatch) || !Backup.backupFiles(m_BinFilesForPatch))
-        return false;
-
-    if (!patchTxtFiles() || !patchBinFiles())
-        return false;
-
-    // Finalization.
-    if (m_ArgsMap.contains(OPT_BACKUP))
-        Backup.save();
-    else
-        if (!Backup.remove())
+    if (!m_ArgsMap.contains(OPT_DRY_RUN)) {
+        if (!Backup->backupFiles(m_TxtFilesForPatch) || !Backup->backupFiles(m_BinFilesForPatch)) {
+            delete Backup;
             return false;
+        }
+    }
+
+    if (!patchTxtFiles() || !patchBinFiles()) {
+        if (!m_ArgsMap.contains(OPT_DRY_RUN))
+            delete Backup;
+        return false;
+    }
+
+
+    if (!m_ArgsMap.contains(OPT_DRY_RUN)) {
+        // Finalization.
+        if (m_ArgsMap.contains(OPT_BACKUP))
+            Backup->save();
+        else {
+            if (!Backup->remove()) {
+                delete Backup;
+                return false;
+            }
+        }
+
+        delete Backup;
+    }
 
     return true;
 }

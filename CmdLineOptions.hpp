@@ -44,6 +44,7 @@
 #define OPT_QT_DIR   "qt-dir"
 #define OPT_NEW_DIR  "new-dir"
 #define OPT_OLD_DIR  "old-dir"
+#define OPT_DRY_RUN  "dry-run"
 
 //------------------------------------------------------------------------------
 

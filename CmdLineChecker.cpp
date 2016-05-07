@@ -102,6 +102,7 @@ string TCmdLineChecker::check(const TStringListMap& argsMap)
     Checker.check(OPT_QT_DIR, otSingleValue);
     Checker.check(OPT_NEW_DIR, otSingleValue);
     Checker.check(OPT_OLD_DIR, otMultiValue);
+    Checker.check(OPT_DRY_RUN, otNoValue);
     Checker.endCheck();
 
     return Checker.m_ErrorString;

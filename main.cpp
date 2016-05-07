@@ -68,6 +68,7 @@ void howToUseMessage()
         "                 If not specified, will be used the current location.\n"
         "  --old-dir=path Directory where Qt was located. This option can be specified\n"
         "                 more then once. This path will be replaced only in text files.\n"
+        "  --dry-run      Output the procedure only, do not really process the jobs.\n"
         "\n"
         "Remark.\n"
         "  If missing \"--backup\" and \"--nobackup\" options, the backup files will be\n"
