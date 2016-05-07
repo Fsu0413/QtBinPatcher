@@ -57,15 +57,12 @@ using namespace Functions;
 
 //------------------------------------------------------------------------------
 
-#ifdef OS_WINDOWS
 // Case-insensitive comparision (only for case-independent file systems).
 
 bool caseInsensitiveComp(const char c1, const char c2)
 {
     return tolower(c1) == tolower(c2);
 }
-
-#endif
 
 //------------------------------------------------------------------------------
 // String comparision. For OS Windows comparision is case-insensitive.
@@ -151,19 +148,19 @@ void TQtBinPatcher::addTxtPatchValues(const string& oldPath)
     if (!oldPath.empty()) {
         m_TxtPatchValues[oldPath] = m_NewQtDir;
 
-        #ifdef OS_WINDOWS
-            string Old = oldPath;
-            string New = m_NewQtDir;
-            replace(Old.begin(), Old.end(), '/', '\\');
-            replace(New.begin(), New.end(), '/', '\\');
-            m_TxtPatchValues[Old] = New;
+#ifdef OS_WINDOWS
+        string Old = oldPath;
+        string New = m_NewQtDir;
+        replace(Old.begin(), Old.end(), '/', '\\');
+        replace(New.begin(), New.end(), '/', '\\');
+        m_TxtPatchValues[Old] = New;
 
-            string NewQtDirDS = m_NewQtDir;
-            replace(&NewQtDirDS, '/', "\\\\");
-            Old = oldPath;
-            replace(&Old, '/', "\\\\");
-            m_TxtPatchValues[Old] = NewQtDirDS;
-        #endif
+        string NewQtDirDS = m_NewQtDir;
+        replace(&NewQtDirDS, '/', "\\\\");
+        Old = oldPath;
+        replace(&Old, '/', "\\\\");
+        m_TxtPatchValues[Old] = NewQtDirDS;
+#endif
     }
 }
 
@@ -177,25 +174,25 @@ void TQtBinPatcher::createBinPatchValues()
     };
 
     static const TParam Params[] = {
+        { "QT_INSTALL_PREFIX",       "qt_epfxpath="},  // "QT_EXT_PREFIX"
         { "QT_INSTALL_PREFIX",       "qt_prfxpath="},
         { "QT_INSTALL_ARCHDATA",     "qt_adatpath="},
+        { "QT_INSTALL_DATA",         "qt_datapath="},
         { "QT_INSTALL_DOCS",         "qt_docspath="},
         { "QT_INSTALL_HEADERS",      "qt_hdrspath="},
         { "QT_INSTALL_LIBS",         "qt_libspath="},
         { "QT_INSTALL_LIBEXECS",     "qt_lbexpath="},
         { "QT_INSTALL_BINS",         "qt_binspath="},
+        { "QT_INSTALL_TESTS",        "qt_tstspath="},
         { "QT_INSTALL_PLUGINS",      "qt_plugpath="},
         { "QT_INSTALL_IMPORTS",      "qt_impspath="},
         { "QT_INSTALL_QML",          "qt_qml2path="},
-        { "QT_INSTALL_DATA",         "qt_datapath="},
         { "QT_INSTALL_TRANSLATIONS", "qt_trnspath="},
         { "QT_INSTALL_EXAMPLES",     "qt_xmplpath="},
         { "QT_INSTALL_DEMOS",        "qt_demopath="},
-        { "QT_INSTALL_TESTS",        "qt_tstspath="},
         { "QT_HOST_PREFIX",          "qt_hpfxpath="},
-        { "QT_INSTALL_PREFIX",       "qt_epfxpath="},  // "QT_EXT_PREFIX"
-        { "QT_HOST_BINS",            "qt_hbinpath="},
         { "QT_HOST_DATA",            "qt_hdatpath="},
+        { "QT_HOST_BINS",            "qt_hbinpath="},
         { "QT_HOST_LIBS",            "qt_hlibpath="}
     };
 
@@ -253,22 +250,15 @@ bool TQtBinPatcher::createTxtFilesForPatchList()
 
     // Files for patching in Qt4.
     static const TElement Elements4[] = {
-#ifndef OS_MACOS
-        { "/lib/",             "*.prl",              false },
-#else
         { "/lib/",             "*.pri",              true  },
-#endif
         { "/demos/shared/",    "libdemo_shared.prl", false },
         { "/lib/pkgconfig/",   "Qt*.pc",             false },
         { "/lib/pkgconfig/",   "phonon*.pc",         false },
-#if defined(OS_WINDOWS)
         { "/mkspecs/default/", "qmake.conf",         false },
-        { "/",                 ".qmake.cache",       false }
-#elif defined(OS_LINUX) || defined(OS_MACOS)
+        { "/",                 ".qmake.cache",       false },
         { "/lib/pkgconfig/",   "qt*.pc",             false },
         { "/lib/",             "*.la",               false },
         { "/mkspecs/",         "qconfig.pri",        false }
-#endif
     };
 
     // Files for patching in Qt5.
@@ -280,11 +270,9 @@ bool TQtBinPatcher::createTxtFilesForPatchList()
         { "/",                            "*.pri",                        true  },
         { "/lib/cmake/Qt5LinguistTools/", "Qt5LinguistToolsConfig.cmake", false },
         { "/mkspecs/default-host/",       "qmake.conf",                   false },
-#ifdef OS_WINDOWS
         { "/mkspecs/default/",            "qmake.conf",                   false },
         { "/",                            ".qmake.cache",                 false },
         { "/lib/",                        "prl.txt",                      false }
-#endif
     };
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -326,46 +314,41 @@ bool TQtBinPatcher::createBinFilesForPatchList()
     struct TElement {
         const char* const Dir;
         const char* const Name;
+        const char *const xplatform;
     };
 
     // Files for patching in Qt4.
     static const TElement Elements4[] = {
 #if defined(OS_WINDOWS)
-        { "/bin/", "qmake.exe"     },
-        { "/bin/", "lrelease.exe"  },
-        { "/bin/", "QtCore*.dll"   },
-        { "/lib/", "QtCore*.dll"   }
+        { "/bin/",                  "qmake.exe",        NULL    },
+        { "/bin/",                  "lrelease.exe",     NULL    },
 #else
-        { "/bin/", "qmake"         },
-        { "/bin/", "lrelease"      },
-#if defined(OS_LINUX)
-        { "/lib/", "libQtCore*.so" }
-#elif defined(OS_MACOS)
-        { "/lib/", "libQtCore*.dylib" },
-        { "/lib/QtCore.framework", "QtCore" }
+        { "/bin/",                  "qmake",            NULL    },
+        { "/bin/",                  "lrelease",         NULL    },
 #endif
-#endif
+        { "/bin/",                  "QtCore*.dll",      "win"   },
+        { "/lib/",                  "QtCore*.dll",      "win"   },
+        { "/lib/",                  "libQtCore*.so",    "linux" },
+        { "/lib/",                  "libQtCore*.dylib", "macx"  },
+        { "/lib/QtCore.framework/", "QtCore",           "macx"  }
     };
 
     // Files for patching in Qt5.
     static const TElement Elements5[] = {
-#if defined(OS_WINDOWS)
-        { "/bin/", "qmake.exe"     },
-        { "/bin/", "lrelease.exe"  },
-        { "/bin/", "qdoc.exe"      },
-        { "/bin/", "Qt5Core*.dll"  },
-        { "/lib/", "Qt5Core*.dll"  }
+#ifdef OS_WINDOWS
+        { "/bin/",                  "qmake.exe",            NULL    },
+        { "/bin/",                  "lrelease.exe",         NULL    },
+        { "/bin/",                  "qdoc.exe",             NULL    },
 #else
-        { "/bin/", "qmake"         },
-        { "/bin/", "lrelease"      },
-        { "/bin/", "qdoc"          },
-#if defined(OS_LINUX)
-        { "/lib/", "libQt5Core.so" }
-#elif defined(OS_MACOS)
-        { "/lib/", "libQt5Core.dylib" },
-        { "/lib/QtCore.framework/", "QtCore" }
+        { "/bin/",                  "qmake",                NULL    },
+        { "/bin/",                  "lrelease",             NULL    },
+        { "/bin/",                  "qdoc",                 NULL    },
 #endif
-#endif
+        { "/bin/",                  "Qt5Core*.dll",         "win"   },
+        { "/lib/",                  "Qt5Core*.dll",         "win"   },
+        { "/lib/",                  "libQt5Core*.so",       "linux" },
+        { "/lib/",                  "libQt5Core*.dylib",    "macx"  },
+        { "/lib/QtCore.framework/", "QtCore",               "macx"  }
     };
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -388,8 +371,27 @@ bool TQtBinPatcher::createBinFilesForPatchList()
             return false;
     }
 
-    for (size_t i = 0; i < Count; ++i)
-        splice(&m_BinFilesForPatch, findFiles(m_QtDir + Elements[i].Dir, Elements[i].Name));
+    for (size_t i = 0; i < Count; ++i) {
+        bool flag = false;
+        if (Elements[i].xplatform == NULL)
+            flag = true;
+        else {
+            const char *const d = ",";
+            char *copystr = new char[strlen(Elements[i].xplatform) + 2];
+            strcpy(copystr, Elements[i].xplatform);
+            char *c = strtok(copystr, d);
+            while (c != NULL) {
+                if (m_QMake.value("QMAKE_XSPEC").find(c) != string::npos) {
+                    flag = true;
+                    break;
+                }
+                c = strtok(NULL, d);
+            }
+            delete [] copystr;
+        }
+        if (flag)
+            splice(&m_BinFilesForPatch, findFiles(m_QtDir + Elements[i].Dir, Elements[i].Name));
+    }
 
     LOG_V("\nList of binary files for patch:\n%s\n",
           stringListToStr(m_BinFilesForPatch, "  ", "\n").c_str());
@@ -477,8 +479,13 @@ bool TQtBinPatcher::patchBinFile(const string& fileName)
             {
                 char* First = Buf;
                 while ((First = search(First, Buf + BufSize,
-                                       Iter->first.begin(), Iter->first.end()))
-                       != Buf + BufSize)
+                                       Iter->first.begin(), Iter->first.end()
+#ifdef OS_WINDOWS
+                                        , caseInsensitiveComp
+#endif
+                                       ))
+                       != Buf + BufSize
+                       )
                 {
                     strcpy(First, Iter->second.c_str());
                     First += Iter->second.length();
