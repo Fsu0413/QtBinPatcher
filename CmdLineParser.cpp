@@ -48,11 +48,9 @@ inline bool strStartingWith(const string& str1, const char *const str2)
 
 TCmdLineParser::TCmdLineParser(int argc, const char* argv[])
 {
-    for (int argNumber = 1; argNumber < argc; ++argNumber)
-    {
+    for (int argNumber = 1; argNumber < argc; ++argNumber) {
         string Opt = argv[argNumber];
-        if (strStartingWith(Opt, "--") && Opt.length() > 2)
-        {
+        if (strStartingWith(Opt, "--") && Opt.length() > 2) {
             Opt = Opt.substr(2);
             string::size_type pos = Opt.find("=");
             string OptName = Opt.substr(0, pos);
@@ -63,8 +61,7 @@ TCmdLineParser::TCmdLineParser(int argc, const char* argv[])
                 m_ArgsMap[OptName].push_back(OptValue);
             else
                 m_ArgsMap[OptName]; // Creating new key with empty value.
-        }
-        else {
+        } else {
             m_ErrorString += "Unknown command line parameter: \"" + Opt + "\".\n";
         }
     }
@@ -75,21 +72,17 @@ TCmdLineParser::TCmdLineParser(int argc, const char* argv[])
 string TCmdLineParser::dump() const
 {
     string Result = "Parsed command line options:\n";
-    for (TStringListMap::const_iterator Iter = m_ArgsMap.begin(); Iter != m_ArgsMap.end(); ++Iter)
-    {
+    for (TStringListMap::const_iterator Iter = m_ArgsMap.begin(); Iter != m_ArgsMap.end(); ++Iter) {
         Result += "  " + Iter->first + ' ';
         size_t spaces = Iter->first.length() + 3;
         TStringList Values = Iter->second;
-        if (!Values.empty())
-        {
-            for (TStringList::const_iterator Jter = Values.begin(); Jter != Values.end(); ++Jter)
-            {
+        if (!Values.empty()) {
+            for (TStringList::const_iterator Jter = Values.begin(); Jter != Values.end(); ++Jter) {
                 if (Jter != Values.begin())
                     Result += string(spaces, ' ');
                 Result += '\"' + *Jter + "\"\n";
             }
-        }
-        else {
+        } else {
             Result += '\n';
         }
     }

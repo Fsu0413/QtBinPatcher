@@ -38,8 +38,8 @@
 
 //------------------------------------------------------------------------------
 
-namespace Functions {
-
+namespace Functions
+{
     void splice(TStringList* pX, TStringList Y);
     char separator();
     std::string normalizeSeparators(const std::string& path);
@@ -65,25 +65,39 @@ namespace Functions {
     //--------------------------------------------------------------------------
 
     inline bool hasOnlyNormalSeparators(const std::string& path)
-        { return hasOnlyNormalSeparators(path.c_str()); }
+    {
+        return hasOnlyNormalSeparators(path.c_str());
+    }
 
     inline bool startsWith(const std::string& str, const std::string& start)
-        { return startsWith(str, start.c_str()); }
+    {
+        return startsWith(str, start.c_str());
+    }
 
     inline bool isFileExists(const std::string& fileName)
-        { return isFileExists(fileName.c_str()); }
+    {
+        return isFileExists(fileName.c_str());
+    }
 
     inline bool renameFile(const std::string& oldFileName, const std::string& newFileName)
-        { return renameFile(oldFileName.c_str(), newFileName.c_str()); }
+    {
+        return renameFile(oldFileName.c_str(), newFileName.c_str());
+    }
 
     inline bool copyFile(const std::string& fromFileName, const std::string& toFileName)
-        { return copyFile(fromFileName.c_str(), toFileName.c_str()); }
+    {
+        return copyFile(fromFileName.c_str(), toFileName.c_str());
+    }
 
     inline bool removeFile(const std::string& fileName)
-        { return removeFile(fileName.c_str()); }
+    {
+        return removeFile(fileName.c_str());
+    }
 
     inline std::string getProgramOutput(const std::string& fileName)
-        { return getProgramOutput(fileName.c_str()); }
+    {
+        return getProgramOutput(fileName.c_str());
+    }
 
 }  // namespace Functions
 

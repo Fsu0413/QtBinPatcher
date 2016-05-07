@@ -41,23 +41,23 @@
 
 class TLogger
 {
-    private :
-        static bool m_Verbose;
-        FILE* m_pFile;
+private:
+    static bool m_Verbose;
+    FILE* m_pFile;
 
-        TLogger();
-        ~TLogger();
-        void printf(FILE* stdstream, const char *const format, va_list vaList);
+    TLogger();
+    ~TLogger();
+    void printf(FILE* stdstream, const char *const format, va_list vaList);
 
-    public :
-        static TLogger* instance();
+public:
+    static TLogger* instance();
 
-        void setFileName(const char *const fileName);
-        void printf(const char *const format, ...);
-        void printf_err(const char *const format, ...);
+    void setFileName(const char *const fileName);
+    void printf(const char *const format, ...);
+    void printf_err(const char *const format, ...);
 
-        static inline bool verbose() { return m_Verbose; }
-        static inline void setVerbose(bool verbose) { m_Verbose = verbose; }
+    static inline bool verbose() { return m_Verbose; }
+    static inline void setVerbose(bool verbose) { m_Verbose = verbose; }
 };
 
 //------------------------------------------------------------------------------

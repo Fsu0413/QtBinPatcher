@@ -47,10 +47,10 @@ typedef std::map<std::string, std::string> TStringMap;
 
 class TStringListMap : public std::map<std::string, TStringList>
 {
-    public :
-        bool contains(const std::string& key) const;
-        std::string value(const std::string& key) const;
-        const TStringList* values(const std::string& key) const;
+public:
+    bool contains(const std::string &key) const;
+    std::string value(const std::string &key) const;
+    const TStringList *values(const std::string &key) const;
 };
 
 //------------------------------------------------------------------------------

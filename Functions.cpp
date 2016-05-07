@@ -35,13 +35,13 @@
 #include <string.h>
 #include <errno.h>
 #if defined(OS_WINDOWS)
-    #include <io.h>
-    #include <direct.h>
+#include <io.h>
+#include <direct.h>
 #elif defined(OS_LINUX) || defined(OS_MACOS)
-    #include <sys/stat.h>
-    #include <unistd.h>
-    #include <glob.h>
-    #include <limits.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <glob.h>
+#include <limits.h>
 #endif
 #include <time.h>
 
@@ -54,19 +54,19 @@ using namespace std;
 //------------------------------------------------------------------------------
 
 #ifdef _MSC_VER
-    #define GETCWD _getcwd
-    #define POPEN  _popen
-    #define PCLOSE _pclose
+#define GETCWD _getcwd
+#define POPEN  _popen
+#define PCLOSE _pclose
 #else
-    #define GETCWD getcwd
-    #define POPEN  popen
-    #define PCLOSE pclose
+#define GETCWD getcwd
+#define POPEN  popen
+#define PCLOSE pclose
 #endif
 
 #ifdef OS_WINDOWS
-    #define POPEN_MODE "rt"
+#define POPEN_MODE "rt"
 #else
-    #define POPEN_MODE "r"
+#define POPEN_MODE "r"
 #endif
 
 //------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ using namespace std;
 
 void eraseLastSeparators(string* pStr)
 {
-    for (int i  = static_cast<int>(pStr->size()) - 1; i >= 0; --i) {
+    for (int i = static_cast<int>(pStr->size()) - 1; i >= 0; --i) {
         const char& c = pStr->at(i);
         if (c == '/' || c == '\\')
             pStr->erase(i);
@@ -99,7 +99,7 @@ void addLastSeparator(string* pStr)
 
 void Functions::splice(TStringList* pX, TStringList Y)
 {
-    if (pX != NULL && ! Y.empty()) {
+    if (pX != NULL && !Y.empty()) {
         TStringList::iterator Iter = pX->end();
         pX->splice(Iter, Y);
     }
@@ -116,15 +116,15 @@ char Functions::separator()
 
 string Functions::normalizeSeparators(const string &path)
 {
-    #ifdef OS_WINDOWS
-        string Result = path;
-        for (string::iterator Iter = Result.begin(); Iter != Result.end(); ++Iter)
-            if (*Iter == '\\')
-                *Iter = '/';
-        return Result;
-    #else
-        return path;
-    #endif
+#ifdef OS_WINDOWS
+    string Result = path;
+    for (string::iterator Iter = Result.begin(); Iter != Result.end(); ++Iter)
+        if (*Iter == '\\')
+            *Iter = '/';
+    return Result;
+#else
+    return path;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -177,21 +177,21 @@ bool Functions::startsWith(const string& str, const char* start)
 string Functions::absolutePath(const string& relativePath)
 {
     string Result;
-    #if defined(OS_WINDOWS)
-        char AbsPath[_MAX_PATH];
-        if (_fullpath(AbsPath, relativePath.c_str(), _MAX_PATH) != NULL)
-            Result = normalizeSeparators(AbsPath);
-    #elif defined(OS_LINUX) || defined(OS_MACOS)
-        char AbsPath[PATH_MAX];
-        if (realpath(relativePath.c_str(), AbsPath) != NULL)
-            Result = AbsPath;
-    #else
-        #error "Unsupported OS."
-    #endif
+#if defined(OS_WINDOWS)
+    char AbsPath[_MAX_PATH];
+    if (_fullpath(AbsPath, relativePath.c_str(), _MAX_PATH) != NULL)
+        Result = normalizeSeparators(AbsPath);
+#elif defined(OS_LINUX) || defined(OS_MACOS)
+    char AbsPath[PATH_MAX];
+    if (realpath(relativePath.c_str(), AbsPath) != NULL)
+        Result = AbsPath;
+#else
+#error "Unsupported OS."
+#endif
 
     if (Result.empty()) {
         LOG_E("Error translate path to absolute. Error %i.\n"
-              "  (%s)",
+            "  (%s)",
             errno, relativePath.c_str());
     }
 
@@ -209,8 +209,7 @@ string Functions::currentDir()
     if (cwd != NULL) {
         Result = cwd;
         free(cwd);
-    }
-    else {
+    } else {
         LOG_E("Error getting current directory. Error %i.\n", errno);
     }
 
@@ -223,22 +222,22 @@ string Functions::currentDir()
 
 bool Functions::isFileExists(const char* fileName)
 {
-    #if defined(OS_WINDOWS)
-        _finddata_t FindData;
-        intptr_t FindHandle = _findfirst(fileName, &FindData);
-        if (FindHandle != -1) {
-            _findclose(FindHandle);
-            return true;
-        }
-    #elif defined(OS_LINUX) || defined(OS_MACOS)
-        glob_t GlobData;
-        if (glob(fileName, 0, NULL, &GlobData) == 0) {
-            globfree(&GlobData);
-            return true;
-        }
-    #else
-        #error "Unsupported OS."
-    #endif
+#if defined(OS_WINDOWS)
+    _finddata_t FindData;
+    intptr_t FindHandle = _findfirst(fileName, &FindData);
+    if (FindHandle != -1) {
+        _findclose(FindHandle);
+        return true;
+    }
+#elif defined(OS_LINUX) || defined(OS_MACOS)
+    glob_t GlobData;
+    if (glob(fileName, 0, NULL, &GlobData) == 0) {
+        globfree(&GlobData);
+        return true;
+    }
+#else
+#error "Unsupported OS."
+#endif
 
     return false;
 }
@@ -248,16 +247,16 @@ bool Functions::isFileExists(const char* fileName)
 
 long Functions::getFileSize(FILE* file)
 {
-    #if defined(OS_WINDOWS)
-        return _filelength(_fileno(file));
-    #elif defined(OS_LINUX) || defined(OS_MACOS)
-        struct stat Stat;
-        if (fstat(fileno(file), &Stat) == 0)
-            return Stat.st_size;
-        return -1;
-    #else
-        #error "Unsupported OS."
-    #endif
+#if defined(OS_WINDOWS)
+    return _filelength(_fileno(file));
+#elif defined(OS_LINUX) || defined(OS_MACOS)
+    struct stat Stat;
+    if (fstat(fileno(file), &Stat) == 0)
+        return Stat.st_size;
+    return -1;
+#else
+#error "Unsupported OS."
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -266,25 +265,25 @@ long Functions::getFileSize(FILE* file)
 bool Functions::zeroFile(FILE* file)
 {
     rewind(file);
-    #if defined(OS_WINDOWS)
-        return _chsize(_fileno(file), 0) == 0;
-    #elif defined(OS_LINUX) || defined(OS_MACOS)
-        return ftruncate(fileno(file), 0) == 0;
-    #else
-        #error "Unsupported OS."
-    #endif
+#if defined(OS_WINDOWS)
+    return _chsize(_fileno(file), 0) == 0;
+#elif defined(OS_LINUX) || defined(OS_MACOS)
+    return ftruncate(fileno(file), 0) == 0;
+#else
+#error "Unsupported OS."
+#endif
 }
 //------------------------------------------------------------------------------
 
 bool Functions::renameFile(const char* oldFileName, const char* newFileName)
 {
     LOG_V("Renaming file \"%s\"\n"
-          "           to \"%s\".\n",
-          oldFileName, newFileName);
+        "           to \"%s\".\n",
+        oldFileName, newFileName);
 
     if (!rename(oldFileName, newFileName) == 0) {
         LOG_E("Error renaming file \"%s\" to \"%s\". Error %i.\n",
-              oldFileName, newFileName, errno);
+            oldFileName, newFileName, errno);
         return false;
     }
     return true;
@@ -295,15 +294,15 @@ bool Functions::renameFile(const char* oldFileName, const char* newFileName)
 bool Functions::copyFile(const char* fromFileName, const char* toFileName)
 {
     LOG_V("Copying file content from \"%s\"\n"
-          "                       to \"%s\".\n",
-          fromFileName, toFileName);
+        "                       to \"%s\".\n",
+        fromFileName, toFileName);
 
     bool Result = true;
     FILE* src = fopen(fromFileName, "rb");
     if (src != NULL) {
         FILE* dst = fopen(toFileName, "wb");
         if (dst != NULL) {
-            char Buffer[1024*32];  // 32kb
+            char Buffer[1024 * 32];  // 32kb
             while (!feof(src)) {
                 size_t size = fread(Buffer, 1, sizeof(Buffer), src);
                 if (fwrite(Buffer, 1, size, dst) != size) {
@@ -315,14 +314,12 @@ bool Functions::copyFile(const char* fromFileName, const char* toFileName)
             fclose(dst);
             if (!Result)
                 removeFile(toFileName);
-        }
-        else {
+        } else {
             LOG_E("Error opening file \"%s\" for writing.\n", toFileName);
             Result = false;
         }
         fclose(src);
-    }
-    else {
+    } else {
         LOG_E("Error opening file \"%s\" for reading.\n", fromFileName);
         Result = false;
     }
@@ -363,8 +360,7 @@ std::string Functions::getProgramOutput(const char* fileName)
     string Result;
     FILE* out;
     out = POPEN(fileName, POPEN_MODE);
-    if (out != NULL)
-    {
+    if (out != NULL) {
         char Buffer[1024];
         while (fgets(Buffer, sizeof(Buffer), out) != NULL)
             Result += Buffer;
@@ -374,8 +370,7 @@ std::string Functions::getProgramOutput(const char* fileName)
         }
         if (PCLOSE(out) == -1)
             LOG_E("Error closing pipe. Error %i.\n", errno);
-    }
-    else {
+    } else {
         LOG_E("Error running program \"%s\". Error %i.\n", fileName, errno);
     }
 
@@ -390,29 +385,29 @@ TStringList Functions::findFiles(string dir, const string& mask)
 
     addLastSeparator(&dir);
 
-    #if defined(OS_WINDOWS)
-        _finddata_t FindData;
-        intptr_t FindHandle = _findfirst((dir + mask).c_str(), &FindData);
-        if (FindHandle != -1) {
-            do {
-                if ((FindData.attrib & _A_SUBDIR) == 0)
-                    Result.push_back(dir + FindData.name);
-            } while (_findnext(FindHandle, &FindData) == 0);
-            _findclose(FindHandle);
+#if defined(OS_WINDOWS)
+    _finddata_t FindData;
+    intptr_t FindHandle = _findfirst((dir + mask).c_str(), &FindData);
+    if (FindHandle != -1) {
+        do {
+            if ((FindData.attrib & _A_SUBDIR) == 0)
+                Result.push_back(dir + FindData.name);
+        } while (_findnext(FindHandle, &FindData) == 0);
+        _findclose(FindHandle);
+    }
+#elif defined(OS_LINUX) || defined(OS_MACOS)
+    glob_t GlobData;
+    if (glob((dir + mask).c_str(), GLOB_MARK, NULL, &GlobData) == 0) {
+        for (size_t i = 0; i < GlobData.gl_pathc; ++i) {
+            const char* path = GlobData.gl_pathv[i];
+            if (path[strlen(path) - 1] != '/')
+                Result.push_back(path);
         }
-    #elif defined(OS_LINUX) || defined(OS_MACOS)
-        glob_t GlobData;
-        if (glob((dir + mask).c_str(), GLOB_MARK, NULL, &GlobData) == 0) {
-            for (size_t i = 0; i < GlobData.gl_pathc; ++i) {
-                const char* path = GlobData.gl_pathv[i];
-                if (path[strlen(path) -1] !=  '/')
-                    Result.push_back(path);
-            }
-            globfree(&GlobData);
-        }
-    #else
-        #error "Unsupported OS."
-    #endif
+        globfree(&GlobData);
+    }
+#else
+#error "Unsupported OS."
+#endif
 
     return Result;
 }
@@ -425,33 +420,32 @@ TStringList Functions::findFilesRecursive(string dir, const string& mask)
 
     addLastSeparator(&dir);
 
-    #if defined (OS_WINDOWS)
-        _finddata_t FindData;
-        intptr_t FindHandle = _findfirst((dir + "*").c_str(), &FindData);
-        if (FindHandle != -1) {
-            do {
-                if ((FindData.attrib & _A_SUBDIR) != 0 &&
-                    strcmp(FindData.name, ".")  != 0   &&
-                    strcmp(FindData.name, "..") != 0)
-                {
-                    splice(&Result, findFilesRecursive(dir + FindData.name + "/", mask));
-                }
-            } while (_findnext(FindHandle, &FindData) == 0);
-            _findclose(FindHandle);
-        }
-        splice(&Result, findFiles(dir, mask));
-    #elif defined (OS_LINUX) || defined(OS_MACOS)
-        glob_t GlobData;
-        if (glob((dir + mask).c_str(), GLOB_MARK, NULL, &GlobData) == 0) {
-            for (size_t i = 0; i < GlobData.gl_pathc; ++i) {
-                const char* path = GlobData.gl_pathv[i];
-                if (path[strlen(path) - 1] != '/')
-                    Result.push_back(path);
-                else
-                   splice(&Result, findFilesRecursive(path, mask));
+#if defined (OS_WINDOWS)
+    _finddata_t FindData;
+    intptr_t FindHandle = _findfirst((dir + "*").c_str(), &FindData);
+    if (FindHandle != -1) {
+        do {
+            if ((FindData.attrib & _A_SUBDIR) != 0 &&
+                strcmp(FindData.name, ".") != 0 &&
+                strcmp(FindData.name, "..") != 0) {
+                splice(&Result, findFilesRecursive(dir + FindData.name + "/", mask));
             }
+        } while (_findnext(FindHandle, &FindData) == 0);
+        _findclose(FindHandle);
+    }
+    splice(&Result, findFiles(dir, mask));
+#elif defined (OS_LINUX) || defined(OS_MACOS)
+    glob_t GlobData;
+    if (glob((dir + mask).c_str(), GLOB_MARK, NULL, &GlobData) == 0) {
+        for (size_t i = 0; i < GlobData.gl_pathc; ++i) {
+            const char* path = GlobData.gl_pathv[i];
+            if (path[strlen(path) - 1] != '/')
+                Result.push_back(path);
+            else
+                splice(&Result, findFilesRecursive(path, mask));
         }
-    #endif
+    }
+#endif
 
     return Result;
 }

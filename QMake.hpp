@@ -40,46 +40,56 @@
 
 class TQMake
 {
-    private :
-        static const std::string m_QMakeName;
-        static const std::string m_BinDirName;
+private:
+    static const std::string m_QMakeName;
+    static const std::string m_BinDirName;
 
-        TStringMap  m_QMakeValues;
-        TStringMap  m_Suffixes;
-        std::string m_QMakePath;
-        std::string m_QtPath;
-        std::string m_QMakeOutput;
-        std::string m_ErrorString;
-        char        m_QtVersion;
+    TStringMap  m_QMakeValues;
+    TStringMap  m_Suffixes;
+    std::string m_QMakePath;
+    std::string m_QtPath;
+    std::string m_QMakeOutput;
+    std::string m_ErrorString;
+    char        m_QtVersion;
 
-        bool find(const std::string& qtDir);
-        bool query();
-        bool parseValues();
-        bool addSuffix(const TStringMap::const_iterator& Iter,
-                       const std::string& prefix,
-                       bool ignoreError);
-        bool parseSuffixes();
-        bool parse();
-        bool getQtPath();
+    bool find(const std::string& qtDir);
+    bool query();
+    bool parseValues();
+    bool addSuffix(const TStringMap::const_iterator& Iter, const std::string& prefix, bool ignoreError);
+    bool parseSuffixes();
+    bool parse();
+    bool getQtPath();
 
-    public :
-        TQMake(const std::string& qtDir);
+public:
+    TQMake(const std::string& qtDir);
 
-        std::string value(const std::string& variable) const;
-        std::string suffix(const std::string& variable) const;
+    std::string value(const std::string& variable) const;
+    std::string suffix(const std::string& variable) const;
 
-        inline const std::string& errorString() const
-            { return m_ErrorString; }
-        inline bool hasError() const
-            { return !m_ErrorString.empty(); }
-        inline const std::string& qtPath() const
-            { return m_QtPath; }
-        inline char qtVersion() const
-            { return m_QtVersion; }
-        inline std::string qtInstallPrefix() const
-            { return value("QT_INSTALL_PREFIX"); }
-        inline std::string qtHostPrefix() const
-            { return value("QT_HOST_PREFIX"); }
+    inline const std::string& errorString() const
+    {
+        return m_ErrorString;
+    }
+    inline bool hasError() const
+    {
+        return !m_ErrorString.empty();
+    }
+    inline const std::string& qtPath() const
+    {
+        return m_QtPath;
+    }
+    inline char qtVersion() const
+    {
+        return m_QtVersion;
+    }
+    inline std::string qtInstallPrefix() const
+    {
+        return value("QT_INSTALL_PREFIX");
+    }
+    inline std::string qtHostPrefix() const
+    {
+        return value("QT_HOST_PREFIX");
+    }
 };
 
 //------------------------------------------------------------------------------

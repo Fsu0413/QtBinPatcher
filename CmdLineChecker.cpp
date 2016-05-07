@@ -49,19 +49,17 @@ TCmdLineChecker::TCmdLineChecker(const TStringListMap& argsMap)
 void TCmdLineChecker::check(const string& option, const TCmdLineChecker::TOptionType optionType)
 {
     TStringListMap::iterator Iter = m_ArgsMap.find(option);
-    if (Iter != m_ArgsMap.end())
-    {
-        switch (optionType)
-        {
-            case otNoValue :
+    if (Iter != m_ArgsMap.end()) {
+        switch (optionType) {
+            case otNoValue:
                 if (!Iter->second.empty())
                     m_ErrorString += "Option \"--" + option + "\" cannot have value.\n";
                 break;
-            case otSingleValue :
+            case otSingleValue:
                 if (Iter->second.size() > 1)
                     m_ErrorString += "Option \"--" + option + "\" can be only one.\n";
                 // break is missing! It's right!
-            case otMultiValue :
+            case otMultiValue:
                 if (Iter->second.empty())
                     m_ErrorString += "Option \"--" + option + "\" must have value.\n";
                 break;
@@ -94,16 +92,16 @@ string TCmdLineChecker::check(const TStringListMap& argsMap)
     TCmdLineChecker Checker(argsMap);
 
     Checker.checkIncompatible(OPT_BACKUP, OPT_NOBACKUP);
-    Checker.check(OPT_VERSION,  otNoValue);
-    Checker.check(OPT_HELP,     otNoValue);
-    Checker.check(OPT_VERBOSE,  otNoValue);
-    Checker.check(OPT_LOGFILE,  otSingleValue);
-    Checker.check(OPT_BACKUP,   otNoValue);
+    Checker.check(OPT_VERSION, otNoValue);
+    Checker.check(OPT_HELP, otNoValue);
+    Checker.check(OPT_VERBOSE, otNoValue);
+    Checker.check(OPT_LOGFILE, otSingleValue);
+    Checker.check(OPT_BACKUP, otNoValue);
     Checker.check(OPT_NOBACKUP, otNoValue);
-    Checker.check(OPT_FORCE,    otNoValue);
-    Checker.check(OPT_QT_DIR,   otSingleValue);
-    Checker.check(OPT_NEW_DIR,  otSingleValue);
-    Checker.check(OPT_OLD_DIR,  otMultiValue);
+    Checker.check(OPT_FORCE, otNoValue);
+    Checker.check(OPT_QT_DIR, otSingleValue);
+    Checker.check(OPT_NEW_DIR, otSingleValue);
+    Checker.check(OPT_OLD_DIR, otMultiValue);
     Checker.endCheck();
 
     return Checker.m_ErrorString;

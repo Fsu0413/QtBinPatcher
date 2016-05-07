@@ -40,24 +40,25 @@
 
 class TCmdLineChecker
 {
-    private :
-        enum TOptionType {
-            otNoValue,
-            otSingleValue,
-            otMultiValue
-        };
+private:
+    enum TOptionType
+    {
+        otNoValue,
+        otSingleValue,
+        otMultiValue
+    };
 
-        TStringListMap m_ArgsMap;
-        std::string    m_ErrorString;
+    TStringListMap m_ArgsMap;
+    std::string    m_ErrorString;
 
-        TCmdLineChecker(const TStringListMap& argsMap);
+    TCmdLineChecker(const TStringListMap &argsMap);
 
-        void check(const std::string& option, const TOptionType optionType);
-        void checkIncompatible(const std::string& option1, const std::string& option2);
-        void endCheck();
+    void check(const std::string &option, const TOptionType optionType);
+    void checkIncompatible(const std::string &option1, const std::string &option2);
+    void endCheck();
 
-    public :
-        static std::string check(const TStringListMap& argsMap);
+public:
+    static std::string check(const TStringListMap &argsMap);
 };
 
 //------------------------------------------------------------------------------

@@ -42,37 +42,37 @@
 
 class TQtBinPatcher
 {
-    private :
-        const TStringListMap& m_ArgsMap;
-        std::string m_QtDir;
-        std::string m_NewQtDir;
-        TStringMap  m_TxtPatchValues;
-        TStringMap  m_BinPatchValues;
-        TStringList m_TxtFilesForPatch;
-        TStringList m_BinFilesForPatch;
-        TQMake      m_QMake;
-        bool        m_hasError;
+private:
+    const TStringListMap& m_ArgsMap;
+    std::string m_QtDir;
+    std::string m_NewQtDir;
+    TStringMap  m_TxtPatchValues;
+    TStringMap  m_BinPatchValues;
+    TStringList m_TxtFilesForPatch;
+    TStringList m_BinFilesForPatch;
+    TQMake      m_QMake;
+    bool        m_hasError;
 
-        std::string getStartDir() const;
-        bool getQtDir();
-        bool getNewQtDir();
-        bool isPatchNeeded();
-        void addTxtPatchValues(const std::string& oldPath);
-        void addBinPatchValues(const std::string& oldPath);
-        void createBinPatchValues();
-        void createPatchValues();
-        bool createTxtFilesForPatchList();
-        bool createBinFilesForPatchList();
-        bool patchTxtFile(const std::string& fileName);
-        bool patchBinFile(const std::string& fileName);
-        bool patchTxtFiles();
-        bool patchBinFiles();
-        bool exec();
+    std::string getStartDir() const;
+    bool getQtDir();
+    bool getNewQtDir();
+    bool isPatchNeeded();
+    void addTxtPatchValues(const std::string& oldPath);
+    void addBinPatchValues(const std::string& oldPath);
+    void createBinPatchValues();
+    void createPatchValues();
+    bool createTxtFilesForPatchList();
+    bool createBinFilesForPatchList();
+    bool patchTxtFile(const std::string& fileName);
+    bool patchBinFile(const std::string& fileName);
+    bool patchTxtFiles();
+    bool patchBinFiles();
+    bool exec();
 
-        TQtBinPatcher(const TStringListMap& argsMap);
+    TQtBinPatcher(const TStringListMap& argsMap);
 
-    public :
-        static bool exec(const TStringListMap& argsMap);
+public:
+    static bool exec(const TStringListMap& argsMap);
 
 };
 

@@ -89,33 +89,28 @@ TBackup::~TBackup()
 
 bool TBackup::backupFile(const string& fileName, const TBackupMethod method)
 {
-    if (isFileExists(fileName))
-    {
-        if (!m_SkipBackup)
-        {
+    if (isFileExists(fileName)) {
+        if (!m_SkipBackup) {
             string BakFileName = backupFileName(fileName);
-            switch (method)
-            {
-                case bmCopy :
+            switch (method) {
+                case bmCopy:
                     if (!copyFile(fileName, BakFileName))
                         return false;
                     break;
-                case bmRename :
+                case bmRename:
                     if (!renameFile(fileName, BakFileName))
                         return false;
                     break;
             }
             m_FilesMapping.push_back(TFileMapping(fileName, BakFileName));
-        }
-        else {
+        } else {
             if (method == bmRename && !removeFile(fileName))
                 return false;
         }
-    }
-    else {
+    } else {
         if (!m_SkipBackup) {
             LOG_V("Skipping backup of file \"%s\" - file not found.\n",
-                  fileName.c_str());
+                fileName.c_str());
         }
     }
     return true;

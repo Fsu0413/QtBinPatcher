@@ -87,11 +87,10 @@ void TLogger::setFileName(const char* const fileName)
         m_pFile = fopen(fileName, "w");
         if (m_pFile == NULL) {
             fprintf(stderr, "Error opening logfile\"%s\".\n"
-                            "Error %i.\n",
-                    fileName, errno);
+                "Error %i.\n",
+                fileName, errno);
         }
-    }
-    else {
+    } else {
         m_pFile = NULL;
     }
 }

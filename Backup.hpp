@@ -40,39 +40,41 @@
 
 class TBackup
 {
-    private :
-        struct TFileMapping {
-            std::string fileName;
-            std::string bakFileName;
+private:
+    struct TFileMapping
+    {
+        std::string fileName;
+        std::string bakFileName;
 
-            TFileMapping(std::string _fileName, std::string _bakFileName);
-        };
-        typedef std::list<TFileMapping> TFilesMapping;
+        TFileMapping(std::string _fileName, std::string _bakFileName);
+    };
+    typedef std::list<TFileMapping> TFilesMapping;
 
-        static const char* const bakFileSuffix;
+    static const char *const bakFileSuffix;
 
-        TFilesMapping m_FilesMapping;
-        bool          m_SkipBackup;
+    TFilesMapping m_FilesMapping;
+    bool          m_SkipBackup;
 
-        static std::string backupFileName(const std::string& fileName);
+    static std::string backupFileName(const std::string& fileName);
 
-    public :
-        enum TBackupMethod {
-            bmCopy,
-            bmRename
-        };
+public:
+    enum TBackupMethod
+    {
+        bmCopy,
+        bmRename
+    };
 
-        TBackup();
-        ~TBackup();
+    TBackup();
+    ~TBackup();
 
-        bool backupFile(const std::string& fileName, const TBackupMethod method = bmCopy);
-        bool backupFiles(const TStringList& files, const TBackupMethod method = bmCopy);
-        bool remove();
-        bool restore();
-        void save();
-        void setSkipBackup(bool skipBackup);
+    bool backupFile(const std::string &fileName, const TBackupMethod method = bmCopy);
+    bool backupFiles(const TStringList &files, const TBackupMethod method = bmCopy);
+    bool remove();
+    bool restore();
+    void save();
+    void setSkipBackup(bool skipBackup);
 
-        inline bool skipBackup() const { return m_SkipBackup; }
+    inline bool skipBackup() const { return m_SkipBackup; }
 };
 
 //------------------------------------------------------------------------------

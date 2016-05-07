@@ -46,12 +46,12 @@ using namespace Functions;
 //------------------------------------------------------------------------------
 
 const string TQMake::m_QMakeName(
-          #ifdef OS_WINDOWS
-              "qmake.exe"
-          #else
-              "qmake"
-          #endif
-      );
+#ifdef OS_WINDOWS
+    "qmake.exe"
+#else
+    "qmake"
+#endif
+);
 const string TQMake::m_BinDirName("bin");
 
 //------------------------------------------------------------------------------
@@ -78,20 +78,19 @@ bool TQMake::find(const string& qtDir)
 bool TQMake::query()
 {
     m_QMakeOutput.clear();
-    if (!m_QMakePath.empty())
-    {
+    if (!m_QMakePath.empty()) {
         string QMakeStart = "\"" + m_QMakePath + m_QMakeName + "\" -query";
-        #ifdef OS_WINDOWS
-            QMakeStart = "\"" + QMakeStart + "\"";
-        #endif
+#ifdef OS_WINDOWS
+        QMakeStart = "\"" + QMakeStart + "\"";
+#endif
         LOG_V("qmake command line: %s.\n", QMakeStart.c_str());
 
         m_QMakeOutput = getProgramOutput(QMakeStart);
         LOG_V("\n"
-              ">>>>>>>>>> BEGIN QMAKE OUTPUT >>>>>>>>>>\n"
-              "%s"
-              "<<<<<<<<<<  END QMAKE OUTPUT  <<<<<<<<<<\n",
-              m_QMakeOutput.c_str());
+            ">>>>>>>>>> BEGIN QMAKE OUTPUT >>>>>>>>>>\n"
+            "%s"
+            "<<<<<<<<<<  END QMAKE OUTPUT  <<<<<<<<<<\n",
+            m_QMakeOutput.c_str());
     }
     return !m_QMakeOutput.empty();
 }
@@ -107,10 +106,9 @@ bool TQMake::parseValues()
         const string::size_type i = str.find(':');
         if (i != string::npos) {
             m_QMakeValues[str.substr(0, i)] = str.substr(i + 1);
-        }
-        else {
+        } else {
             m_ErrorString += "Error parsing qmake output string:\n"
-                             "\"" + str + "\"\n";
+                "\"" + str + "\"\n";
             return false;
         }
         s = strtok(NULL, Delimiters);
@@ -133,23 +131,21 @@ bool TQMake::parseValues()
 //------------------------------------------------------------------------------
 
 bool TQMake::addSuffix(const TStringMap::const_iterator& Iter,
-                       const string& prefix,
-                       bool ignoreError)
+    const string& prefix,
+    bool ignoreError)
 {
     assert(hasOnlyNormalSeparators(prefix));
 
-    if (!Iter->second.empty())
-    {
+    if (!Iter->second.empty()) {
         string value = normalizeSeparators(Iter->second);
         if (startsWith(value, prefix)) {
             value = trimSeparators(value.substr(prefix.length()));
             if (!value.empty())
                 m_Suffixes[Iter->first] = normalizeSeparators(value);
-        }
-        else {
+        } else {
             string errorString = "QMake variable \"" + Iter->first +
-                                 "\" with value \"" + Iter->second +
-                                 "\" don't have prefix \"" + prefix + "\".\n";
+                "\" with value \"" + Iter->second +
+                "\" don't have prefix \"" + prefix + "\".\n";
             if (ignoreError) {
                 LOG_V(errorString.c_str());
                 return true;
@@ -171,10 +167,9 @@ bool TQMake::parseSuffixes()
 
     string prefix = normalizeSeparators(qtInstallPrefix());
     string hostPrefix = normalizeSeparators(qtHostPrefix());
-    for (TStringMap::iterator Iter = m_QMakeValues.begin(); Iter != m_QMakeValues.end(); ++Iter)
-    {
+    for (TStringMap::iterator Iter = m_QMakeValues.begin(); Iter != m_QMakeValues.end(); ++Iter) {
         bool ignoreError = false;
-        for (size_t i = 0; i < sizeof(ignoredValues)/sizeof(ignoredValues[0]); ++i)
+        for (size_t i = 0; i < sizeof(ignoredValues) / sizeof(ignoredValues[0]); ++i)
             if (Iter->first.compare(ignoredValues[0]) == 0) {
                 ignoreError = true;
                 break;
@@ -182,8 +177,7 @@ bool TQMake::parseSuffixes()
         if (startsWith(Iter->first, "QT_INSTALL_")) {
             if (!addSuffix(Iter, prefix, ignoreError))
                 return false;
-        }
-        else if (startsWith(Iter->first, "QT_HOST_")) {
+        } else if (startsWith(Iter->first, "QT_HOST_")) {
             if (!addSuffix(Iter, hostPrefix, ignoreError))
                 return false;
         }
@@ -232,8 +226,7 @@ bool TQMake::getQtPath()
         string::size_type pos = m_QtPath.find_last_of(separator());
         if (pos != string::npos) {
             m_QtPath.resize(pos);
-        }
-        else {
+        } else {
             m_ErrorString += "Can't determine path to Qt directory.\n";
             return false;
         }
