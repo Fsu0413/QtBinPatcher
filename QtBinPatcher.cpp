@@ -534,15 +534,11 @@ bool TQtBinPatcher::exec()
     if (!getNewQtDir())
         return false;
 
-    TBackup *Backup = NULL;
+    TBackup Backup;
     if (!m_ArgsMap.contains(OPT_DRY_RUN)) {
-        Backup = new TBackup;
-
-        Backup->setSkipBackup(m_ArgsMap.contains(OPT_NOBACKUP));
-        if (!Backup->backupFile(m_QtDir + "/bin/qt.conf", TBackup::bmRename)) {
-            delete Backup;
+        Backup.setSkipBackup(m_ArgsMap.contains(OPT_NOBACKUP));
+        if (!Backup.backupFile(m_QtDir + "/bin/qt.conf", TBackup::bmRename))
             return false;
-        }
     }
 
     if (!isPatchNeeded()) {
@@ -552,45 +548,31 @@ bool TQtBinPatcher::exec()
         } else {
             LOG("\nThe new and the old pathes to Qt directory are the same.\n"
                 "Patching not needed.\n");
-            if (!m_ArgsMap.contains(OPT_DRY_RUN))
-                delete Backup;
             return true;
         }
     }
 
     createPatchValues();
-    if (!createTxtFilesForPatchList() || !createBinFilesForPatchList()) {
-        if (!m_ArgsMap.contains(OPT_DRY_RUN))
-            delete Backup;
+    if (!createTxtFilesForPatchList() || !createBinFilesForPatchList())
         return false;
-    }
 
     if (!m_ArgsMap.contains(OPT_DRY_RUN)) {
-        if (!Backup->backupFiles(m_TxtFilesForPatch) || !Backup->backupFiles(m_BinFilesForPatch)) {
-            delete Backup;
+        if (!Backup.backupFiles(m_TxtFilesForPatch) || !Backup.backupFiles(m_BinFilesForPatch))
             return false;
-        }
     }
 
-    if (!patchTxtFiles() || !patchBinFiles()) {
-        if (!m_ArgsMap.contains(OPT_DRY_RUN))
-            delete Backup;
+    if (!patchTxtFiles() || !patchBinFiles())
         return false;
-    }
 
 
     if (!m_ArgsMap.contains(OPT_DRY_RUN)) {
         // Finalization.
         if (m_ArgsMap.contains(OPT_BACKUP))
-            Backup->save();
+            Backup.save();
         else {
-            if (!Backup->remove()) {
-                delete Backup;
+            if (!Backup.remove())
                 return false;
-            }
         }
-
-        delete Backup;
     }
 
     return true;
