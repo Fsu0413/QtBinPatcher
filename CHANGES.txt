@@ -1,3 +1,11 @@
+2016-06-27. Version 2.3.0
+    * Restarted Maintaining by Fsu0413
+    * Added support for macOS
+    * Added support for dry-run
+    * Windows XP can no longer run qtbinpatcher.exe if VS2012 or later is used (because Qt 5.7.0 no longer supports Windows XP), Windows XP users should use 2.2.0 or earlyer
+    * Added support for cross-compiled Qt (Experimental!)
+    * Added a qmake configuration
+
 2015-07-05. Version 2.2.0.
     * Added support for Qt 5.5 (Thanks to Alexpux (alexey.pawlow@gmail.com)).
     * Changed algorithm for patching of binary files.
