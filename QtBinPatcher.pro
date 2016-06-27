@@ -49,3 +49,4 @@ osx:   DEFINES += OS_MACOS
 !win32: !linux: !osx: error("Unsupported operating system!")
 
 !CONFIG(debug): DEFINES += NDEBUG
+CONFIG(qtcross): DEFINES += QTCROSS

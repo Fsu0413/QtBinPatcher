@@ -87,7 +87,12 @@ int main(int argc, const char* argv[])
         "QtBinPatcher v2.3.0Beta. Tool for patching paths in Qt binaries.\n"
         "Yuri V. Krugloff, 2013-2015. http://www.tver-soft.org\n"
         "Frank Su, 2016. http://mogara.org\n"
-        "This is free software released into the public domain.\n\n");
+        "This is free software released into the public domain.\n"
+#ifdef QTCROSS
+        "This binary is built for cross compiled Qt.\n"
+#endif
+        "\n"
+    );
 
 
     TCmdLineParser CmdLineParser(argc, argv);

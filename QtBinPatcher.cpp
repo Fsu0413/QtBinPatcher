@@ -327,11 +327,13 @@ bool TQtBinPatcher::createBinFilesForPatchList()
         {"/bin/", "qmake", NULL},
         {"/bin/", "lrelease", NULL},
 #endif
+#ifndef QTCROSS
         {"/bin/", "QtCore*.dll", "win"},
         {"/lib/", "QtCore*.dll", "win"},
         {"/lib/", "libQtCore*.so", "linux"},
         {"/lib/", "libQtCore*.dylib", "macx"},
         {"/lib/QtCore.framework/", "QtCore", "macx"}
+#endif
     };
 
     // Files for patching in Qt5.
@@ -345,11 +347,13 @@ bool TQtBinPatcher::createBinFilesForPatchList()
         {"/bin/", "lrelease", NULL},
         {"/bin/", "qdoc", NULL},
 #endif
+#ifndef QTCROSS
         {"/bin/", "Qt5Core*.dll", "win"},
         {"/lib/", "Qt5Core*.dll", "win"},
         {"/lib/", "libQt5Core*.so", "linux"},
         {"/lib/", "libQt5Core*.dylib", "macx"},
         {"/lib/QtCore.framework/", "QtCore", "macx"}
+#endif
     };
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

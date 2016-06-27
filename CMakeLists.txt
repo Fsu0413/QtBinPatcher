@@ -88,6 +88,10 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions(-DNDEBUG)
 endif()
 
+if(QTBINPATCHER_QTCROSS)
+    add_definitions(-DQTCROSS)
+endif()
+
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
