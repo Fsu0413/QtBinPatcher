@@ -83,7 +83,7 @@ void howToUseMessage()
 
 int main(int argc, const char* argv[])
 {
-    LOG("\n"
+    const char *description = "\n"
         "QtBinPatcher v2.3.0Beta. Tool for patching paths in Qt binaries.\n"
         "Yuri V. Krugloff, 2013-2015. http://www.tver-soft.org\n"
         "Frank Su, 2016. http://mogara.org\n"
@@ -92,8 +92,9 @@ int main(int argc, const char* argv[])
         "This binary is built for cross compiled Qt.\n"
 #endif
         "\n"
-    );
+    ;
 
+    LOG(description);
 
     TCmdLineParser CmdLineParser(argc, argv);
     if (CmdLineParser.hasError()) {
