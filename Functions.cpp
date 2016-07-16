@@ -281,7 +281,7 @@ bool Functions::renameFile(const char* oldFileName, const char* newFileName)
         "           to \"%s\".\n",
         oldFileName, newFileName);
 
-    if (!rename(oldFileName, newFileName) == 0) {
+    if (rename(oldFileName, newFileName) != 0) {
         LOG_E("Error renaming file \"%s\" to \"%s\". Error %i.\n",
             oldFileName, newFileName, errno);
         return false;
