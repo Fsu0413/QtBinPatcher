@@ -49,6 +49,10 @@ set(SRC_LIST
     main.cpp
 )
 
+message("Current operating system: ${CMAKE_SYSTEM_NAME}")
+
+set(QTBINPATCHER_GENERIC_UNIXLIKE_SYSTEM "[(Linux)(FreeBSD)]")
+
 if(WIN32)
     add_definitions(-DOS_WINDOWS)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
@@ -72,16 +76,21 @@ if(WIN32)
             endif()
         endforeach()
     endif()
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_definitions(-DOS_MACOS)
+else()
+    # We treat all other OS as Linux. But....
+    # Not all OSs are compatible on file names with Linux, so we should add a warning here
+    if(NOT ${CMAKE_SYSTEM_NAME} MATCHES ${QTBINPATCHER_GENERIC_UNIXLIKE_SYSTEM})
+        message(FATAL_ERROR "QtBinPatcher has not tested with your OS, please modify CMakeLists.txt if you are sure with your configuration.")
+    endif()
+
+    # Do what we should do on Linux.
     add_definitions(-DOS_LINUX)
     # Uncomment lines below for static linking.
     #if(CMAKE_COMPILER_IS_GNUCC)
     #    set(CMAKE_CXX_FLAGS "-static -static-libgcc -static-libstdc++ -Wl,-s ${CMAKE_CXX_FLAGS}")
     #endif()
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    add_definitions(-DOS_MACOS)
-else()
-    message(FATAL_ERROR "Unsupported operating system!")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
