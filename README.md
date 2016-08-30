@@ -39,11 +39,11 @@ Instructions for qmake:
 
 ## Notes for a cross-compiled Qt
 
-To use QtBinPatcher for a cross-compiled Qt, note that the cross-compiled target libs should not be patched by this software.
+To use QtBinPatcher for a cross-compiled Qt, note that the cross-compiled target libs should not be patched by this software.  
 We use precompiler-macro to deal with this condition.
 
-Add a parameter to CMake/qmake executable to compile a version of QtBinPatcher for cross-compiled Qt, e.g.:
-cmake ../patcher -G "NMake Makefiles JOM" -DQTBINPATCHER_QTCROSS=True
-qmake ../patcher -spec win32-msvc2015 CONFIG+=qtcross
+Add a parameter to CMake/qmake executable to compile a version of QtBinPatcher for cross-compiled Qt, e.g.:  
+cmake ../patcher -G "NMake Makefiles JOM" -DQTBINPATCHER_QTCROSS=True  
+qmake ../patcher -spec win32-msvc2015 CONFIG+=qtcross  
 
 When build succeed, using "./qtbinpatcher --help"(or "qtbinpatcher.exe --help" for windows) to check if it is built for cross compiled Qt.
