@@ -59,7 +59,11 @@ void TLogger::printf(FILE* stdstream, const char* const format, va_list vaList)
 {
     if (m_pFile != NULL) {
         va_list vaList2;
+#if defined(_MSC_VER) && (_MSC_VER <= 1700)
+        vaList2 = vaList;
+#else
         va_copy(vaList2, vaList);
+#endif
         vfprintf(m_pFile, format, vaList2);
         va_end(vaList2);
         fflush(m_pFile);
