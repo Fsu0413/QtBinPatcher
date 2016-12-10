@@ -33,6 +33,8 @@
 
 #include <string.h>
 #include <assert.h>
+#include <regex>
+#include <fstream>
 
 #include "Functions.hpp"
 #include "Logger.hpp"
@@ -264,6 +266,65 @@ string TQMake::suffix(const string& variable) const
     if (Iter != m_Suffixes.end())
         return Iter->second;
     return string();
+}
+
+//------------------------------------------------------------------------------
+
+string TQMake::xSpec() const
+{
+    if (m_QtVersion == '5')
+        return value("QMAKE_XSPEC");
+    else {
+        try {
+            regex r("\\s*QMAKESPEC_ORIGINAL=(.*)\\s*");
+
+            ifstream ifs(m_QtPath + "/mkspecs/default/qmake.conf");
+            if (!ifs.is_open()) {
+                LOG_E("open qmake.conf failed\n");
+                return string();
+            }
+
+            string n;
+            char buf[1000];
+            for (memset(buf, 0, 1000); ifs.getline(buf, 995); memset(buf, 0, 1000)) {
+                cmatch m;
+                bool b = regex_match(buf, m, r);
+                if (!b)
+                    continue;
+                csub_match sm = m[1];
+                if (!sm.matched)
+                    continue;
+                n = sm;
+                break;
+            }
+
+            if (n.empty()) {
+                if (ifs.eof())
+                    LOG_E("parse end. no QMAKESPEC_ORIGINAL info for this qmake.conf\n");
+                else
+                    LOG_E("ifstream error while parsing qmake.conf\n");
+
+                return string();
+            }
+            ifs.close();
+
+            memset(buf, 0, 1000);
+            strcpy(buf, n.c_str());
+            while (buf[strlen(buf) - 1] == '/')
+                buf[strlen(buf) - 1] = '\0';
+
+            char *tok = strtok(buf, "/");
+            while (tok != NULL) {
+                n = tok;
+                tok = strtok(NULL, "/");
+            }
+
+            return n;
+        } catch (std::regex_error e) {
+            LOG_E("bad regex: %s\n", e.what());
+            return string();
+        }
+    }
 }
 
 //------------------------------------------------------------------------------

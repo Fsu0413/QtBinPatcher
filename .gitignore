@@ -1,2 +1,4 @@
 *.txt.user
 *.pro.user*
+qbs_dummy*
+*.qbs.user*

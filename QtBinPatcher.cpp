@@ -372,8 +372,14 @@ bool TQtBinPatcher::createBinFilesForPatchList()
             Count = sizeof(Elements5) / sizeof(Elements5[0]);
             break;
         default:
-            LOG_E("Unsupported Qt version (%c).", m_QMake.qtVersion());
+            LOG_E("Unsupported Qt version (%c).\n", m_QMake.qtVersion());
             return false;
+    }
+
+    string xspec = m_QMake.xSpec();
+    if (xspec.empty()) {
+        LOG_E("Unable to get mkspec from Qt install.\n");
+        return false;
     }
 
     for (size_t i = 0; i < Count; ++i) {
@@ -386,7 +392,7 @@ bool TQtBinPatcher::createBinFilesForPatchList()
             strcpy(copystr, Elements[i].xplatform);
             char *c = strtok(copystr, d);
             while (c != NULL) {
-                if (m_QMake.value("QMAKE_XSPEC").find(c) != string::npos) {
+                if (xspec.find(c) != string::npos) {
                     flag = true;
                     break;
                 }
@@ -416,14 +422,13 @@ bool TQtBinPatcher::patchTxtFile(const string& fileName)
     bool Result = false;
 
     FILE* File = fopen(fileName.c_str(), "r+b");
-    if (File != NULL) {
+    if (File != NULL) { // Todo_Fs: Workaround QTBUG-27593
         vector<char> Buf;
         long FileLength = getFileSize(File);
 
         if (FileLength > 0) {
             Buf.resize(FileLength);
-            if (fread(Buf.data(), FileLength, 1, File) == 1) // TODO: C++11 requred!
-            {
+            if (fread(Buf.data(), FileLength, 1, File) == 1) {
                 for (TStringMap::const_iterator Iter = m_TxtPatchValues.begin(); Iter != m_TxtPatchValues.end(); ++Iter) {
                     string::size_type Delta = 0;
                     vector<char>::iterator Found;
