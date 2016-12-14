@@ -64,6 +64,7 @@ private:
     bool createTxtFilesForPatchList();
     bool createBinFilesForPatchList();
     bool patchTxtFile(const std::string& fileName);
+    bool patchQtbug27593(const std::string &fileName);
     bool patchBinFile(const std::string& fileName);
     bool patchTxtFiles();
     bool patchBinFiles();

@@ -37,6 +37,7 @@
 #include <errno.h>
 #include <vector>
 #include <algorithm>
+#include <fstream>
 
 #include "Logger.hpp"
 #include "Functions.hpp"
@@ -421,8 +422,11 @@ bool TQtBinPatcher::patchTxtFile(const string& fileName)
 
     bool Result = false;
 
+    if ((m_QMake.qtVersion() == '4') && (fileName.substr(fileName.length() - 26) == "mkspecs/default/qmake.conf")) // Workaround QTBUG-27593 && QTBUG-28792
+        return patchQtbug27593(fileName);
+
     FILE* File = fopen(fileName.c_str(), "r+b");
-    if (File != NULL) { // Todo_Fs: Workaround QTBUG-27593
+    if (File != NULL) {
         vector<char> Buf;
         long FileLength = getFileSize(File);
 
@@ -463,6 +467,22 @@ bool TQtBinPatcher::patchTxtFile(const string& fileName)
     }
 
     return Result;
+}
+
+//------------------------------------------------------------------------------
+
+bool TQtBinPatcher::patchQtbug27593(const string &fileName)
+{
+    try {
+        string xspec = m_QMake.xSpec();
+        ofstream ofs(fileName.c_str(), ios_base::out | ios_base::trunc);
+        ofs << (string("QMAKESPEC_ORIGINAL=") + m_NewQtDir + string("/mkspecs/") + xspec) << endl << endl;
+        ofs << (string("include(../") + xspec + string("/qmake.conf)")) << endl << endl;
+    } catch(...) {
+        return false;
+    }
+
+    return true;
 }
 
 //------------------------------------------------------------------------------
