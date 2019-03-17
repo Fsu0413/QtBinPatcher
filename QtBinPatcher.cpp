@@ -178,6 +178,9 @@ void TQtBinPatcher::createBinPatchValues()
     static const TParam Params[] = {
         {"QT_INSTALL_PREFIX", "qt_epfxpath="},  // "QT_EXT_PREFIX"
         {"QT_INSTALL_PREFIX", "qt_prfxpath="},
+        {"QT_HOST_PREFIX", "qt_hpfxpath="}
+#ifndef QTCROSS
+        ,
         {"QT_INSTALL_ARCHDATA", "qt_adatpath="},
         {"QT_INSTALL_DATA", "qt_datapath="},
         {"QT_INSTALL_DOCS", "qt_docspath="},
@@ -192,10 +195,10 @@ void TQtBinPatcher::createBinPatchValues()
         {"QT_INSTALL_TRANSLATIONS", "qt_trnspath="},
         {"QT_INSTALL_EXAMPLES", "qt_xmplpath="},
         {"QT_INSTALL_DEMOS", "qt_demopath="},
-        {"QT_HOST_PREFIX", "qt_hpfxpath="},
         {"QT_HOST_DATA", "qt_hdatpath="},
         {"QT_HOST_BINS", "qt_hbinpath="},
         {"QT_HOST_LIBS", "qt_hlibpath="}
+#endif
     };
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -269,11 +272,14 @@ bool TQtBinPatcher::createTxtFilesForPatchList()
         {"/lib/pkgconfig/", "Qt5*.pc", true},
         {"/lib/pkgconfig/", "Enginio*.pc", true},
         {"/", "*.pri", true},
-        {"/lib/cmake/Qt5LinguistTools/", "Qt5LinguistToolsConfig.cmake", false},
+        {"/lib/cmake/Qt5LinguistTools/", "Qt5LinguistToolsConfig.cmake", false}
+#ifndef QTCROSS
+        ,
         {"/mkspecs/default-host/", "qmake.conf", false},
         {"/mkspecs/default/", "qmake.conf", false},
         {"/", ".qmake.cache", false},
         {"/lib/", "prl.txt", false}
+#endif
     };
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -323,12 +329,12 @@ bool TQtBinPatcher::createBinFilesForPatchList()
     static const TElement Elements4[] = {
 #if defined(OS_WINDOWS)
         {"/bin/", "qmake.exe", NULL},
-        {"/bin/", "lrelease.exe", NULL},
 #else
         {"/bin/", "qmake", NULL},
-        {"/bin/", "lrelease", NULL},
 #endif
 #ifndef QTCROSS
+        {"/bin/", "lrelease", NULL},
+        {"/bin/", "lrelease.exe", NULL},
         {"/bin/", "QtCore*.dll", "win"},
         {"/lib/", "QtCore*.dll", "win"},
         {"/lib/", "libQtCore*.so", "linux"},
@@ -341,14 +347,14 @@ bool TQtBinPatcher::createBinFilesForPatchList()
     static const TElement Elements5[] = {
 #ifdef OS_WINDOWS
         {"/bin/", "qmake.exe", NULL},
-        {"/bin/", "lrelease.exe", NULL},
         {"/bin/", "qdoc.exe", NULL},
 #else
         {"/bin/", "qmake", NULL},
-        {"/bin/", "lrelease", NULL},
         {"/bin/", "qdoc", NULL},
 #endif
 #ifndef QTCROSS
+        {"/bin/", "lrelease", NULL},
+        {"/bin/", "lrelease.exe", NULL},
         {"/bin/", "Qt5Core*.dll", "win"},
         {"/lib/", "Qt5Core*.dll", "win"},
         {"/lib/", "libQt5Core*.so", "linux"},
