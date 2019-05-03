@@ -1,3 +1,9 @@
+# This repository is abandoned by Fsu0413.
+I developed a new patcher using Qt with a totally different design.  
+It should support native and cross builds without modifing the executable file.  
+It supports Qt4.8 and Qt5(after 5.6) native builds and Qt5(after 5.6) cross builds(only for Android by now).
+[https://github.com/Fsu0413/QQtPatcher](https://github.com/Fsu0413/QQtPatcher)
+
 # QtBinPatcher
 Tool for patching paths in binary and text files of Qt Framework
 
